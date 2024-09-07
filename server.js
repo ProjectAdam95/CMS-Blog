@@ -19,7 +19,7 @@ const sess = {
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,  // Cookie lasts for 1 day
     httpOnly: true,  // Helps prevent cross-site scripting
-    secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production
+    secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production (HTTPS)
     sameSite: 'strict',  // Helps with CSRF protection
   },
   resave: false,
@@ -44,6 +44,12 @@ app.use(express.static(path.join(__dirname, 'public')));  // Serve static files 
 // Routes
 app.use('/', homeRoutes);  // Front-end pages
 app.use('/api', apiRoutes);  // Backend API routes from the routes/api folder
+
+// Error handling middleware (optional)
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
+});
 
 // Sync Sequelize models to the database, then start the server
 sequelize.sync({ force: false }).then(() => {  // Use force: true with caution

@@ -1,45 +1,49 @@
 const router = require('express').Router();
-const { Post, User, Comment } = require('../models'); 
+const { Post, User, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
-
+// Home route - Display all posts
 router.get('/', async (req, res) => {
   try {
-    
-    const posts = (await Post.findAll({ 
+    const postsData = await Post.findAll({
       include: [{ model: User, attributes: ['username'] }]
-    })).map(post => post.get({ plain: true }));
+    });
+    
+    const posts = postsData.map(post => post.get({ plain: true }));
 
     // Render the home page, passing posts and the login status
     res.render('home', { title: 'Home Page', posts, loggedIn: req.session.logged_in });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
   }
 });
 
-
+// Post detail route - Display single post with comments
 router.get('/post/:id', async (req, res) => {
   try {
-    const post = await Post.findByPk(req.params.id, {
+    const postData = await Post.findByPk(req.params.id, {
       include: [
         { model: User, attributes: ['username'] },
-        { model: Comment, include: [{ model: User, attributes: ['username'] }] }  // Include comments with users
+        { model: Comment, include: [{ model: User, attributes: ['username'] }] }
       ]
     });
-    
-    if (!post) return res.status(404).json({ message: 'No post found' });
 
-   
-    res.render('post', { title: `Post: ${post.title}`, post: post.get({ plain: true }), loggedIn: req.session.logged_in });
+    if (!postData) {
+      return res.status(404).render('error', { message: 'Post not found' });
+    }
+
+    const post = postData.get({ plain: true });
+
+    // Render the post detail page
+    res.render('post', { title: `Post: ${post.title}`, post, loggedIn: req.session.logged_in });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
   }
 });
 
-module.exports = router;
-
-
-
+// Login route
 router.get('/login', (req, res) => {
   if (req.session.logged_in) {
     return res.redirect('/');
@@ -47,7 +51,7 @@ router.get('/login', (req, res) => {
   res.render('login');
 });
 
-// Render the signup page
+// Signup route
 router.get('/signup', (req, res) => {
   if (req.session.logged_in) {
     return res.redirect('/');
@@ -55,23 +59,25 @@ router.get('/signup', (req, res) => {
   res.render('signup');
 });
 
-
+// Dashboard route (protected by withAuth)
 router.get('/dashboard', withAuth, async (req, res) => {
   try {
-    // Fetch posts for the logged-in user only
-    const posts = (await Post.findAll({
+    const postsData = await Post.findAll({
       where: { user_id: req.session.user_id },
       include: [{ model: User, attributes: ['username'] }]
-    })).map(post => post.get({ plain: true }));
+    });
+
+    const posts = postsData.map(post => post.get({ plain: true }));
 
     // Render the dashboard page with the user's posts
-    res.render('dashboard', { posts, loggedIn: req.session.logged_in });
+    res.render('dashboard', { title: 'My Dashboard', posts, loggedIn: req.session.logged_in });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).render('error', { message: 'Unable to load dashboard. Please try again later.' });
   }
 });
 
-
+// New post route (protected by withAuth)
 router.get('/new-post', withAuth, (req, res) => {
   res.render('new-post', { loggedIn: req.session.logged_in });
 });
@@ -85,26 +91,25 @@ router.post('/logout', (req, res) => {
   }
 });
 
-
+// Edit post route (protected by withAuth)
 router.get('/post/edit/:id', withAuth, async (req, res) => {
   try {
-    const post = await Post.findByPk(req.params.id, {
+    const postData = await Post.findByPk(req.params.id, {
       include: [{ model: User, attributes: ['username'] }]
     });
 
-    if (!post) {
-      res.status(404).json({ message: 'No post found' });
-      return;
+    if (!postData) {
+      return res.status(404).render('error', { message: 'Post not found' });
     }
 
-    
-    res.render('edit-post', { post: post.get({ plain: true }), loggedIn: req.session.logged_in });
+    const post = postData.get({ plain: true });
+
+    // Render the edit post page
+    res.render('edit-post', { title: 'Edit Post', post, loggedIn: req.session.logged_in });
   } catch (err) {
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).render('error', { message: 'Unable to load edit page. Please try again later.' });
   }
 });
 
-
-
 module.exports = router;
-

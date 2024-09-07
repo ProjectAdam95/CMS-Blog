@@ -1,6 +1,5 @@
-const loginFormHandler = async (event) => {
+document.querySelector('.login-form').addEventListener('submit', async (event) => {
   event.preventDefault();
-  console.log('Form submitted');  // Debugging line
 
   const username = document.querySelector('#username-login').value.trim();
   const password = document.querySelector('#password-login').value.trim();
@@ -13,23 +12,28 @@ const loginFormHandler = async (event) => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      console.log('Response received:', response);  // Log response
+      // Log the entire response to make sure it is received correctly
+      console.log('Response received:', response);
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Redirecting to:', data.redirectUrl);  // Log the redirect URL
+        // Log the parsed data, including the redirectUrl
+        console.log('Login successful, data:', data);
+        
+        // Redirect to the dashboard or the specified URL
         document.location.replace(data.redirectUrl);
       } else {
-        console.error('Login failed');
+        console.error('Login failed:', await response.text());
         alert('Failed to log in.');
       }
     } catch (err) {
-      console.error('Error during login:', err);  // Log any errors
+      console.error('Error during login:', err);
     }
+  } else {
+    alert('Please enter both username and password');
   }
-};
+});
 
-document.querySelector('.login-form').addEventListener('submit', loginFormHandler);
 
 
 

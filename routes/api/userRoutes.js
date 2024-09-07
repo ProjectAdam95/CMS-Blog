@@ -5,24 +5,24 @@ const bcrypt = require('bcrypt');
 // Login Route
 router.post('/login', async (req, res) => {
   try {
-    console.log('Login request received:', req.body);  // Logs the incoming request
-
     const user = await User.findOne({ where: { username: req.body.username } });
 
-    if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
-      console.log('Invalid username or password');
-      return res.status(400).json({ message: 'Incorrect username or password' });
+    if (!user || !(await user.checkPassword(req.body.password))) {
+      return res.status(400).json({ message: 'Invalid username or password' });
     }
 
     req.session.save(() => {
+      // Log the session object to ensure the session is being saved correctly
+      console.log('Session after login:', req.session);
+      
       req.session.user_id = user.id;
       req.session.logged_in = true;
 
-      console.log('Session saved, user logged in');  // Logs that the session was saved
+      // Send response with redirect URL
       res.status(200).json({ message: 'Logged in successfully!', redirectUrl: '/dashboard' });
     });
   } catch (err) {
-    console.error('Error during login:', err);  // Logs any errors
+    console.error('Error during login:', err);
     res.status(500).json({ message: 'An error occurred during login', error: err });
   }
 });
