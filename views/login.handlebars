@@ -1,11 +1,15 @@
-<form class="login-form" id="login-form">
-  <label for="username-login">Username</label>
-  <input type="text" id="username-login" name="username" placeholder="Username" required>
+<section class="login-form-container">
+  <form class="login-form" id="login-form" action="/api/users/login" method="POST">
+    <label for="username-login">Username:</label>
+    <input type="text" id="username-login" name="username" placeholder="Username" required>
 
-  <label for="password-login">Password</label>
-  <input type="password" id="password-login" name="password" placeholder="Password" required>
+    <label for="password-login">Password:</label>
+    <input type="password" id="password-login" name="password" placeholder="Password" required>
 
-  <button type="submit">Log In</button>
-</form>
+    <button type="submit">Log In</button>
+  </form>
+</section>
 
+<!-- Include the login.js file for handling form submission -->
 <script src="/js/login.js"></script>
+
