@@ -14,14 +14,14 @@ Comment.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    user_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: 'users', // Correct table name is 'users'
-        key: 'id',
-      },
-      onDelete: 'CASCADE',
-    },
+user_id: {
+  type: DataTypes.INTEGER,
+  references: {
+    model: 'users', // Correct table name is 'users'
+    key: 'id',
+  },
+  onDelete: 'CASCADE',
+},
     post_id: {
       type: DataTypes.INTEGER,
       references: {

@@ -1,14 +1,14 @@
 <section class="centered-content">
   
-  <form class="signup-form">
-    <label for="username-signup">Username:</label>
-    <input type="text" id="username-signup" name="username" placeholder="Username" required>
+<form class="signup-form" id="signup-form" action="/api/users/signup" method="POST">
+  <label for="username-signup">Username:</label>
+  <input type="text" id="username-signup" name="username" placeholder="Username" required>
 
-    <label for="password-signup">Password:</label>
-    <input type="password" id="password-signup" name="password" placeholder="Password" required>
+  <label for="password-signup">Password:</label>
+  <input type="password" id="password-signup" name="password" placeholder="Password" required>
 
-    <button type="submit">Sign Up</button>
-  </form>
+  <button type="submit">Sign Up</button>
+</form>
 </section>
 
 <script src="/js/signup.js"></script>

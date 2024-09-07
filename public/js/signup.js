@@ -12,15 +12,17 @@ const signupFormHandler = async (event) => {
     });
 
     if (response.ok) {
-      const data = await response.json();  // Parse the response
-      document.location.replace(data.redirectUrl);  // Redirect to dashboard
+      const data = await response.json();
+      document.location.replace(data.redirectUrl);  // Redirect to the dashboard
     } else {
-      alert('Failed to sign up.');
+      const errorData = await response.json();
+      alert(errorData.message || 'Failed to sign up.');
     }
   }
 };
 
 document.querySelector('.signup-form').addEventListener('submit', signupFormHandler);
+
 
 
 
