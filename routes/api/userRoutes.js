@@ -7,7 +7,6 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
 
-    // Check if user exists and if the password is correct
     if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
       return res.status(400).json({ message: 'Incorrect username or password' });
     }
@@ -17,8 +16,8 @@ router.post('/login', async (req, res) => {
       req.session.user_id = user.id;
       req.session.logged_in = true;
 
-      // Redirect to dashboard after login
-      res.redirect('/dashboard');  // Added redirect to dashboard
+      // Return a JSON response with the redirect URL
+      res.status(200).json({ message: 'Logged in successfully!', redirectUrl: '/dashboard' });
     });
   } catch (err) {
     console.error(err);  // Log any server-side error
@@ -29,41 +28,37 @@ router.post('/login', async (req, res) => {
 // Signup Route
 router.post('/signup', async (req, res) => {
   try {
-    console.log('Signup request received with:', req.body);  // Log the signup request body
+    console.log('Signup request received with:', req.body);
 
-    // Check if username already exists
     const existingUser = await User.findOne({ where: { username: req.body.username } });
     if (existingUser) {
       return res.status(400).json({ message: 'Username already exists. Please choose a different one.' });
     }
 
-    // Create new user
     const newUser = await User.create({
       username: req.body.username,
-      password: req.body.password,  // Ensure password hashing is handled in the model
+      password: req.body.password,
     });
 
-    // Automatically log the user in after signup
     req.session.save(() => {
       req.session.user_id = newUser.id;
       req.session.logged_in = true;
 
-      // Redirect to dashboard after signup
-      res.redirect('/dashboard');  // Added redirect to dashboard
+      // Return a JSON response with the redirect URL
+      res.status(200).json({ message: 'Signed up successfully!', redirectUrl: '/dashboard' });
     });
   } catch (err) {
-    console.error(err);  // Log any error during signup
-    res.status(500).json(err);
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred during signup', error: err });
   }
 });
 
 // Logout Route
 router.post('/logout', (req, res) => {
   if (req.session.logged_in) {
-    // Destroy session to log out user
     req.session.destroy(() => {
-      // Redirect to homepage after logout
-      res.redirect('/');  // Added redirect to homepage
+      // Return a JSON response to confirm logout and redirect
+      res.status(204).json({ message: 'Logged out successfully', redirectUrl: '/' });
     });
   } else {
     res.status(404).json({ message: 'No active session to log out from' });
@@ -71,6 +66,7 @@ router.post('/logout', (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
