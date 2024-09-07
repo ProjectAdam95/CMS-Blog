@@ -16,7 +16,9 @@ router.post('/login', async (req, res) => {
     req.session.save(() => {
       req.session.user_id = user.id;
       req.session.logged_in = true;
-      res.json({ user, message: 'Logged in successfully!' });
+
+      // Redirect to dashboard after login
+      res.redirect('/dashboard');  // Added redirect to dashboard
     });
   } catch (err) {
     console.error(err);  // Log any server-side error
@@ -37,7 +39,9 @@ router.post('/signup', async (req, res) => {
     req.session.save(() => {
       req.session.user_id = newUser.id;
       req.session.logged_in = true;
-      res.json({ user: newUser, message: 'You are now signed up and logged in!' });
+
+      // Redirect to dashboard after signup
+      res.redirect('/dashboard');  // Added redirect to dashboard
     });
   } catch (err) {
     console.error(err);  // Log any error during signup
@@ -50,7 +54,8 @@ router.post('/logout', (req, res) => {
   if (req.session.logged_in) {
     // Destroy session to log out user
     req.session.destroy(() => {
-      res.status(204).end();  // No content on successful logout
+      // Redirect to homepage after logout
+      res.redirect('/');  // Added redirect to homepage
     });
   } else {
     res.status(404).json({ message: 'No active session to log out from' });
@@ -58,6 +63,7 @@ router.post('/logout', (req, res) => {
 });
 
 module.exports = router;
+
 
 
 
