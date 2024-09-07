@@ -1,0 +1,15 @@
+<section class="post-list">
+  {{#each posts}}
+    <article class="post">
+      <h2>{{this.title}}</h2>
+      <p>{{this.content}}</p>
+      <div class="post-meta">Posted by {{this.user.username}} on {{format_date this.createdAt}}</div>
+      
+      
+      <a href="/post/{{this.id}}">View Post & Comments</a>  
+    </article>
+  {{/each}}
+</section>
+
+
+

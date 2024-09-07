@@ -1,0 +1,37 @@
+<main>
+    <div class="content">
+        <article class="post">
+            <h2>{{post.title}}</h2>
+            <p>{{post.content}}</p>
+            <p>Posted by {{post.user.username}} on {{format_date post.createdAt}}</p>
+        </article>
+        
+      
+        <section class="comments">
+            <h3>Comments</h3>
+            {{#each post.comments}}
+            <div class="comment">
+                <p><strong>{{this.user.username}}</strong>: {{this.comment_text}}</p>
+                <p>Posted on {{format_date this.createdAt}}</p> 
+            </div>
+            {{/each}}
+        
+            {{#if loggedIn}}
+          
+
+            <form id="new-comment-form" action="#" method="POST">
+                <textarea id="comment-text" name="comment_text" placeholder="Leave a comment..." required></textarea>
+                <input type="hidden" id="post-id" value="{{post.id}}">
+                <button type="submit">Submit Comment</button>
+            </form>
+            {{else}}
+            <p><a href="/login">Log in</a> to leave a comment.</p>
+            {{/if}}
+        </section>
+    </div>
+</main>
+
+<script src="/js/new-comment.js"></script>
+
+
+
