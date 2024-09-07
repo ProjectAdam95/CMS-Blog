@@ -1,28 +1,24 @@
 const Sequelize = require('sequelize');
 require('dotenv').config();
 
-const sequelize = process.env.DATABASE_URL
-  ? new Sequelize(process.env.DATABASE_URL, {
-      dialect: 'postgres',
-      protocol: 'postgres',
-      dialectOptions: {
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,  // Ensures SSL works for cloud providers like Heroku/Render
-        },
+const sequelize = new Sequelize(
+  process.env.DB_NAME,     // Use DB_NAME from .env
+  process.env.DB_USER,     // Use DB_USER from .env
+  process.env.DB_PASSWORD, // Use DB_PASSWORD from .env
+  {
+    host: process.env.DB_HOST || 'localhost', // Use DB_HOST or default to 'localhost'
+    dialect: 'postgres',
+    port: process.env.DB_PORT || 5432,        // Use DB_PORT or default to 5432
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,  // Ensure SSL connection on Render
       },
-    })
-  : new Sequelize(
-      process.env.DB_NAME,
-      process.env.DB_USER,
-      process.env.DB_PASSWORD,
-      {
-        host: process.env.DB_HOST || 'localhost',  // Use environment variable for DB_HOST if available
-        dialect: 'postgres',
-        port: process.env.DB_PORT || 5432,  // Use environment variable for DB_PORT if available
-      }
-    );
+    },
+  }
+);
 
 module.exports = sequelize;
+
 
 
