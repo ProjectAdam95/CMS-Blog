@@ -12,18 +12,21 @@ router.post('/login', async (req, res) => {
     }
 
     req.session.save(() => {
-      // Log the session object to ensure the session is being saved correctly
+      // Log the session object to check if it has been set correctly
       console.log('Session after login:', req.session);
-      
+
       req.session.user_id = user.id;
       req.session.logged_in = true;
 
-      // Send response with redirect URL
+      // Log session data to see if it's saving correctly
+      console.log('Session details:', { user_id: req.session.user_id, logged_in: req.session.logged_in });
+
+      // Send the response with the redirect URL
       res.status(200).json({ message: 'Logged in successfully!', redirectUrl: '/dashboard' });
     });
   } catch (err) {
     console.error('Error during login:', err);
-    res.status(500).json({ message: 'An error occurred during login', error: err });
+    res.status(500).json({ message: 'An error occurred during login' });
   }
 });
 
