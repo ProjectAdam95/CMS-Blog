@@ -1,5 +1,3 @@
-
-
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 
@@ -21,7 +19,7 @@ Post.init(
     user_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'user',
+        model: 'users', // Correct this to 'users' to match your User model
         key: 'id',
       },
     },
@@ -36,4 +34,5 @@ Post.init(
 );
 
 module.exports = Post;
+
 
