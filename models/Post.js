@@ -19,9 +19,10 @@ Post.init(
     user_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'users', // Correct this to 'users' to match your User model
+        model: 'users', // Correct table name is 'users'
         key: 'id',
       },
+      onDelete: 'CASCADE',
     },
   },
   {

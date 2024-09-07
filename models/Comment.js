@@ -7,7 +7,6 @@ Comment.init(
   {
     id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       primaryKey: true,
       autoIncrement: true,
     },
@@ -17,19 +16,19 @@ Comment.init(
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       references: {
-        model: 'user',
+        model: 'users', // Correct table name is 'users'
         key: 'id',
       },
+      onDelete: 'CASCADE',
     },
     post_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       references: {
-        model: 'post',
+        model: 'post',  // Assuming your 'post' table is named 'post'
         key: 'id',
       },
+      onDelete: 'CASCADE',
     },
   },
   {
@@ -42,5 +41,6 @@ Comment.init(
 );
 
 module.exports = Comment;
+
 
 
