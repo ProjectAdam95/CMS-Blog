@@ -32,6 +32,7 @@ const sess = {
 // Middleware
 app.use(session(sess));  // Session middleware
 
+// Handlebars setup
 const hbs = exphbs.create({ helpers });  // Handlebars with helpers
 app.engine('handlebars', hbs.engine);  // Register Handlebars as the view engine
 app.set('view engine', 'handlebars');
@@ -45,6 +46,6 @@ app.use('/', homeRoutes);  // Front-end pages
 app.use('/api', apiRoutes);  // Backend API routes from the routes/api folder
 
 // Sync Sequelize models to the database, then start the server
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ force: false }).then(() => {  // Use force: true with caution
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });

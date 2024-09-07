@@ -8,7 +8,7 @@ const sequelize = process.env.DATABASE_URL
       dialectOptions: {
         ssl: {
           require: true,
-          rejectUnauthorized: false,  // This is important for cloud-based PostgreSQL connections
+          rejectUnauthorized: false,  // Ensures SSL works for cloud providers like Heroku/Render
         },
       },
     })
@@ -17,11 +17,12 @@ const sequelize = process.env.DATABASE_URL
       process.env.DB_USER,
       process.env.DB_PASSWORD,
       {
-        host: 'localhost',
+        host: process.env.DB_HOST || 'localhost',  // Use environment variable for DB_HOST if available
         dialect: 'postgres',
-        port: 5432,
+        port: process.env.DB_PORT || 5432,  // Use environment variable for DB_PORT if available
       }
     );
 
 module.exports = sequelize;
+
 

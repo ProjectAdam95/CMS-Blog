@@ -29,10 +29,18 @@ router.post('/login', async (req, res) => {
 // Signup Route
 router.post('/signup', async (req, res) => {
   try {
-    console.log('Signing up with:', req.body);  // Log the signup attempt for debugging
+    console.log('Signup request received with:', req.body);  // Log the signup request body
+
+    // Check if username already exists
+    const existingUser = await User.findOne({ where: { username: req.body.username } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Username already exists. Please choose a different one.' });
+    }
+
+    // Create new user
     const newUser = await User.create({
       username: req.body.username,
-      password: req.body.password,  // Password will be hashed by User model hooks
+      password: req.body.password,  // Ensure password hashing is handled in the model
     });
 
     // Automatically log the user in after signup
