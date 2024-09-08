@@ -45,13 +45,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));  // Serve static files from the "public" folder
 
-// Rate Limiter
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-app.use(limiter);
-
 // Handlebars setup
 const hbs = exphbs.create({ helpers });
 app.engine('handlebars', hbs.engine);
