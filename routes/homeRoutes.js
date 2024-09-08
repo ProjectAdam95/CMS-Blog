@@ -81,6 +81,11 @@ router.get('/signup', (req, res) => {
 
 // Dashboard route (protected by withAuth)
 router.get('/dashboard', withAuth, async (req, res) => {
+  if (!req.session.logged_in) {
+    return res.redirect('/login');
+  }
+
+  // Fetch user-specific posts if logged in
   try {
     const postsData = await Post.findAll({
       where: { user_id: req.session.user_id },
@@ -89,8 +94,11 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
     const posts = postsData.map(post => post.get({ plain: true }));
 
-    // Render the dashboard page with the user's posts
-    res.render('dashboard', { title: 'My Dashboard', posts, loggedIn: req.session.logged_in });
+    res.render('dashboard', { 
+      title: 'My Dashboard', 
+      posts, 
+      loggedIn: req.session.logged_in 
+    });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Unable to load dashboard. Please try again later.' });

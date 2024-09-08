@@ -22,9 +22,9 @@ const sess = {
   secret: process.env.SESSION_SECRET || 'myassignmentsecret',
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-    httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-    secure: process.env.NODE_ENV === 'production', // Set to true in production to enforce HTTPS
-    sameSite: 'strict', // CSRF protection
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',  // Set to true in production
+    sameSite: 'strict',  // CSRF protection
   },
   resave: false,
   saveUninitialized: false,
@@ -32,6 +32,9 @@ const sess = {
     db: sequelize,
   }),
 };
+
+app.use(session(sess));
+
 
 // Middleware
 app.use(session(sess));
