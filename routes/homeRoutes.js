@@ -44,11 +44,17 @@ router.get('/post/:id', async (req, res) => {
 });
 
 // Login route
-router.get('/login', (req, res) => {
-  if (req.session.loggedIn) {
-    return res.redirect('/');
+router.post('/login', async (req, res) => {
+  // Authenticate user
+  const user = await User.findOne({ where: { username: req.body.username } });
+
+  if (user && user.validatePassword(req.body.password)) {
+    req.session.user_id = user.id;
+    req.session.loggedIn = true;
+    res.json({ message: 'Login successful', redirectUrl: '/' });
+  } else {
+    res.status(401).json({ message: 'Invalid username or password' });
   }
-  res.render('login', { title: 'Login' });
 });
 
 // Signup route
@@ -85,8 +91,11 @@ router.get('/new-post', withAuth, (req, res) => {
 // Logout route
 router.post('/logout', (req, res) => {
   if (req.session.loggedIn) {
-    req.session.destroy(() => {
-      res.status(200).json({ message: 'Logged out successfully', redirectUrl: '/' });
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: 'Failed to log out' });
+      }
+      res.json({ message: 'Logged out successfully', redirectUrl: '/' });
     });
   } else {
     res.status(404).json({ message: 'No active session to log out from' });
