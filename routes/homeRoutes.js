@@ -43,7 +43,7 @@ router.get('/post/:id', async (req, res) => {
   }
 });
 
-// Login route
+// Login route (POST) - Authenticate user
 router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
@@ -61,6 +61,14 @@ router.post('/login', async (req, res) => {
     console.error('Login Error:', err);
     res.status(500).json({ message: 'An error occurred during login.' });
   }
+});
+
+// Login route (GET) - Render the login page
+router.get('/login', (req, res) => {
+  if (req.session.logged_in) {
+    return res.redirect('/dashboard');  // Redirect if already logged in
+  }
+  res.render('login', { title: 'Login' });  // Render the login page
 });
 
 // Signup route

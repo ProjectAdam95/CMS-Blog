@@ -56,7 +56,7 @@ app.set('view engine', 'handlebars');
 
 // Routes
 app.use('/', homeRoutes);
-app.use('/api', apiRoutes);
+app.use('/api', apiRoutes); 
 
 // Error handling middleware
 app.use((err, req, res, next) => {

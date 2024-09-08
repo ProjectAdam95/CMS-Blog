@@ -32,12 +32,12 @@ router.put('/:id', withAuth, async (req, res) => {
       }
     );
 
-    if (!updatedPost) {
+    if (updatedPost[0] === 0) {  // Check if any rows were updated
       res.status(404).json({ message: 'No post found with this id!' });
       return;
     }
 
-    res.status(200).json(updatedPost);
+    res.status(200).json({ message: 'Post updated successfully' });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -92,7 +92,7 @@ router.get('/:id', async (req, res) => {
     // Render the post page with the retrieved post data
     res.render('post', { 
       post, 
-      loggedIn: req.session.loggedIn  // Pass session variable to determine if the user is logged in
+      loggedIn: req.session.logged_in  // Use logged_in for consistency
     });
   } catch (err) {
     res.status(500).json(err);
