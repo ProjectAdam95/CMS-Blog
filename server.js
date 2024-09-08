@@ -16,12 +16,12 @@ const PORT = process.env.PORT || 3001;
 
 // Session settings
 const sess = {
-  secret: process.env.SESSION_SECRET || 'myassignmentsecret',
+  secret: process.env.SESSION_SECRET || 'myassignmentsecret',  // Make sure to use a strong secret
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000,  // 1 day
+    httpOnly: true,  // Prevents client-side JavaScript from accessing the cookie
+    secure: process.env.NODE_ENV === 'production',  // Set to true in production to enforce HTTPS
+    sameSite: 'strict',  // CSRF protection
   },
   resave: false,
   saveUninitialized: false,

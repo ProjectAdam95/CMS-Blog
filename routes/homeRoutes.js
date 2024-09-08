@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     const posts = postsData.map(post => post.get({ plain: true }));
 
     // Render the home page, passing posts and the login status
-    res.render('home', { title: 'Home Page', posts, loggedIn: req.session.logged_in });
+    res.render('home', { title: 'Home Page', posts, loggedIn: req.session.loggedIn });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
@@ -36,7 +36,7 @@ router.get('/post/:id', async (req, res) => {
     const post = postData.get({ plain: true });
 
     // Render the post detail page
-    res.render('post', { title: `Post: ${post.title}`, post, loggedIn: req.session.logged_in });
+    res.render('post', { title: `Post: ${post.title}`, post, loggedIn: req.session.loggedIn });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
@@ -45,18 +45,18 @@ router.get('/post/:id', async (req, res) => {
 
 // Login route
 router.get('/login', (req, res) => {
-  if (req.session.logged_in) {
+  if (req.session.loggedIn) {
     return res.redirect('/');
   }
-  res.render('login');
+  res.render('login', { title: 'Login' });
 });
 
 // Signup route
 router.get('/signup', (req, res) => {
-  if (req.session.logged_in) {
+  if (req.session.loggedIn) {
     return res.redirect('/');
   }
-  res.render('signup');
+  res.render('signup', { title: 'Signup' });
 });
 
 // Dashboard route (protected by withAuth)
@@ -70,7 +70,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const posts = postsData.map(post => post.get({ plain: true }));
 
     // Render the dashboard page with the user's posts
-    res.render('dashboard', { title: 'My Dashboard', posts, loggedIn: req.session.logged_in });
+    res.render('dashboard', { title: 'My Dashboard', posts, loggedIn: req.session.loggedIn });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Unable to load dashboard. Please try again later.' });
@@ -79,15 +79,17 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
 // New post route (protected by withAuth)
 router.get('/new-post', withAuth, (req, res) => {
-  res.render('new-post', { loggedIn: req.session.logged_in });
+  res.render('new-post', { title: 'Create New Post', loggedIn: req.session.loggedIn });
 });
 
 // Logout route
 router.post('/logout', (req, res) => {
-  if (req.session.logged_in) {
-    req.session.destroy(() => res.status(204).end());  // Logout user
+  if (req.session.loggedIn) {
+    req.session.destroy(() => {
+      res.status(200).json({ message: 'Logged out successfully', redirectUrl: '/' });
+    });
   } else {
-    res.status(404).end();  // User was not logged in
+    res.status(404).json({ message: 'No active session to log out from' });
   }
 });
 
@@ -105,11 +107,12 @@ router.get('/post/edit/:id', withAuth, async (req, res) => {
     const post = postData.get({ plain: true });
 
     // Render the edit post page
-    res.render('edit-post', { title: 'Edit Post', post, loggedIn: req.session.logged_in });
+    res.render('edit-post', { title: `Edit Post: ${post.title}`, post, loggedIn: req.session.loggedIn });
   } catch (err) {
     console.error(err);
-    res.status(500).render('error', { message: 'Unable to load edit page. Please try again later.' });
+    res.status(500).render('error', { message: 'Unable to load post for editing. Please try again later.' });
   }
 });
 
 module.exports = router;
+

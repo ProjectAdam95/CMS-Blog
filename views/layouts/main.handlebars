@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{title}}</title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css?v=1.2">
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -36,11 +36,12 @@
     </footer>
 
     <!-- Add the logout script -->
-    {{#if loggedIn}}
-        <script src="/js/logout.js"></script>
-    {{/if}}
+{{#if loggedIn}}
+    <script src="/js/logout.js?v=1.2"></script>
+{{/if}}
 </body>
 </html>
+
 
 
 
