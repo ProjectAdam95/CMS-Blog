@@ -7,26 +7,23 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
 
-    if (!user || !(await user.checkPassword(req.body.password))) {
-      return res.status(400).json({ message: 'Invalid username or password' });
+    if (!user || !(await user.validatePassword(req.body.password))) {
+      return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    req.session.save(() => {
-      // Log the session object to check if it has been set correctly
-      console.log('Session after login:', req.session);
+    req.session.user_id = user.id;
+    req.session.logged_in = true;
 
-      req.session.user_id = user.id;
-      req.session.logged_in = true;
-
-      // Log session data to see if it's saving correctly
-      console.log('Session details:', { user_id: req.session.user_id, logged_in: req.session.logged_in });
-
-      // Send the response with the redirect URL
-      res.status(200).json({ message: 'Logged in successfully!', redirectUrl: '/dashboard' });
+    // Force session save
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+      }
+      res.json({ message: 'Login successful', redirectUrl: '/dashboard' });
     });
   } catch (err) {
-    console.error('Error during login:', err);
-    res.status(500).json({ message: 'An error occurred during login' });
+    console.error('Login Error:', err);
+    res.status(500).json({ message: 'An error occurred during login.' });
   }
 });
 

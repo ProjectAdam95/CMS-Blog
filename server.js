@@ -21,19 +21,21 @@ console.log(`Running in ${process.env.NODE_ENV} mode.`);
 const sess = {
   secret: process.env.SESSION_SECRET || 'myassignmentsecret',
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000, 
-    httpOnly: false, 
-    secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'lax',  
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    httpOnly: true, // Prevent client-side JS from accessing the cookie
+    secure: process.env.NODE_ENV === 'production', // Ensures cookies are sent over HTTPS in production
+    sameSite: 'strict', // CSRF protection
   },
   resave: false,
   saveUninitialized: false,
   store: new SequelizeStore({
     db: sequelize,
+    checkExpirationInterval: 15 * 60 * 1000, // Clear expired sessions every 15 minutes
+    expiration: 24 * 60 * 60 * 1000, // Session expiration is 24 hours
   }),
 };
 
-// Use session middleware
+// Apply session middleware
 app.use(session(sess));
 
 // **Sync the sessions table**
@@ -48,6 +50,11 @@ app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store');  // Prevents caching
     console.log('Caching disabled for development');
   }
+  next();
+});
+
+app.use((req, res, next) => {
+  console.log('Session info:', req.session);
   next();
 });
 
