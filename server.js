@@ -15,15 +15,15 @@ const PORT = process.env.PORT || 3001;
 
 // Session settings
 const sess = {
-  secret: process.env.SESSION_SECRET || 'myassignmentsecret',  // Use environment variable for secret
+  secret: process.env.SESSION_SECRET || 'myassignmentsecret',  
   cookie: {
     maxAge: 24 * 60 * 60 * 1000,  // Cookie lasts for 1 day
-    httpOnly: true,  // Helps prevent cross-site scripting
-    secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production (HTTPS)
-    sameSite: 'strict',  // Helps with CSRF protection
+    httpOnly: true,  // Prevents JavaScript from accessing cookies
+    secure: process.env.NODE_ENV === 'production',  // Set secure cookies only in production (HTTPS)
+    sameSite: 'strict',  // Helps prevent CSRF
   },
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,  // Change to false to avoid creating empty sessions
   store: new SequelizeStore({
     db: sequelize,
   }),
