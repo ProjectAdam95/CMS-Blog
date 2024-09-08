@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
     const postsData = await Post.findAll({
       include: [{ model: User, attributes: ['username'] }]
     });
-    
+
     const posts = postsData.map(post => post.get({ plain: true }));
 
     // Render the home page, passing posts and the login status
@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
 
-    if (!user || !(await user.validatePassword(req.body.password))) {
+    if (!user || !(await user.checkPassword(req.body.password))) { // Change this to checkPassword
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
@@ -81,10 +81,6 @@ router.get('/signup', (req, res) => {
 
 // Dashboard route (protected by withAuth)
 router.get('/dashboard', withAuth, async (req, res) => {
-  if (!req.session.logged_in) {
-    return res.redirect('/login');
-  }
-
   // Fetch user-specific posts if logged in
   try {
     const postsData = await Post.findAll({

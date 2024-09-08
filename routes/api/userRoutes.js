@@ -7,19 +7,14 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
 
-    // Use checkPassword method from the User model
     if (!user || !(await user.checkPassword(req.body.password))) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    // Save user session
-    req.session.user_id = user.id;
-    req.session.logged_in = true;
+    req.session.save(() => {
+      req.session.user_id = user.id;
+      req.session.logged_in = true;
 
-    req.session.save((err) => {
-      if (err) {
-        console.error('Session save error:', err);
-      }
       res.json({ message: 'Login successful', redirectUrl: '/dashboard' });
     });
   } catch (err) {

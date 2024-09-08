@@ -21,19 +21,20 @@ console.log(`Running in ${process.env.NODE_ENV} mode.`);
 const sess = {
   secret: process.env.SESSION_SECRET || 'myassignmentsecret',
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-    httpOnly: true, // Prevent client-side JS from accessing the cookie
-    secure: process.env.NODE_ENV === 'production', // Ensures cookies are sent over HTTPS in production
-    sameSite: 'strict', // CSRF protection
+    maxAge: 24 * 60 * 60 * 1000, // 1 day expiration
+    httpOnly: false, // Allow cookies to be accessed via JavaScript (insecure, but functional)
+    secure: false, // Don't require HTTPS (even in production; this is insecure but will work)
+    sameSite: 'lax', // Allow cookies during cross-site redirects
   },
   resave: false,
   saveUninitialized: false,
   store: new SequelizeStore({
     db: sequelize,
-    checkExpirationInterval: 15 * 60 * 1000, // Clear expired sessions every 15 minutes
-    expiration: 24 * 60 * 60 * 1000, // Session expiration is 24 hours
   }),
 };
+
+app.use(session(sess));
+
 
 // Apply session middleware
 app.use(session(sess));
