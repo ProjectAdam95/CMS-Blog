@@ -1,3 +1,12 @@
+-- Users Table
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Posts Table
 CREATE TABLE posts (
   id SERIAL PRIMARY KEY,
@@ -18,3 +27,10 @@ CREATE TABLE comments (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Sessions Table (if needed)
+CREATE TABLE sessions (
+  sid VARCHAR NOT NULL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  expires TIMESTAMP NOT NULL,
+  data TEXT
+);

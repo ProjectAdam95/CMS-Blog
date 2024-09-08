@@ -22,22 +22,26 @@ const sess = {
   secret: process.env.SESSION_SECRET || 'myassignmentsecret',
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 1 day
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',  // Set to true in production
+    httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+    secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
     sameSite: 'strict',  // CSRF protection
   },
   resave: false,
   saveUninitialized: false,
   store: new SequelizeStore({
-    db: sequelize,
+    db: sequelize,  // Use the same Sequelize connection
   }),
 };
 
+
+// Use session middleware
 app.use(session(sess));
 
-
-// Middleware
-app.use(session(sess));
+// **Sync the sessions table**
+const store = new SequelizeStore({
+  db: sequelize,
+});
+store.sync();  // Ensures the sessions table is created
 
 // No-cache middleware for development
 app.use((req, res, next) => {
@@ -48,6 +52,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware for parsing JSON and URL-encoded data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));  // Serve static files from the "public" folder
@@ -59,7 +64,7 @@ app.set('view engine', 'handlebars');
 
 // Routes
 app.use('/', homeRoutes);
-app.use('/api', apiRoutes); 
+app.use('/api', apiRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -79,3 +84,4 @@ app.use((req, res) => {
 sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
+
