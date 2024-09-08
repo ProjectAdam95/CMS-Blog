@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     const posts = postsData.map(post => post.get({ plain: true }));
 
     // Render the home page, passing posts and the login status
-    res.render('home', { title: 'Home Page', posts, loggedIn: req.session.loggedIn });
+    res.render('home', { title: 'Home Page', posts, loggedIn: req.session.logged_in });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
@@ -36,7 +36,7 @@ router.get('/post/:id', async (req, res) => {
     const post = postData.get({ plain: true });
 
     // Render the post detail page
-    res.render('post', { title: `Post: ${post.title}`, post, loggedIn: req.session.loggedIn });
+    res.render('post', { title: `Post: ${post.title}`, post, loggedIn: req.session.logged_in });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Something went wrong. Please try again later.' });
@@ -45,21 +45,27 @@ router.get('/post/:id', async (req, res) => {
 
 // Login route
 router.post('/login', async (req, res) => {
-  // Authenticate user
-  const user = await User.findOne({ where: { username: req.body.username } });
+  try {
+    const user = await User.findOne({ where: { username: req.body.username } });
 
-  if (user && user.validatePassword(req.body.password)) {
-    req.session.user_id = user.id;
-    req.session.loggedIn = true;
-    res.json({ message: 'Login successful', redirectUrl: '/' });
-  } else {
-    res.status(401).json({ message: 'Invalid username or password' });
+    if (!user || !(await user.validatePassword(req.body.password))) {
+      return res.status(401).json({ message: 'Invalid username or password' });
+    }
+
+    req.session.save(() => {
+      req.session.user_id = user.id;
+      req.session.logged_in = true;
+      res.json({ message: 'Login successful', redirectUrl: '/dashboard' });
+    });
+  } catch (err) {
+    console.error('Login Error:', err);
+    res.status(500).json({ message: 'An error occurred during login.' });
   }
 });
 
 // Signup route
 router.get('/signup', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.logged_in) {
     return res.redirect('/');
   }
   res.render('signup', { title: 'Signup' });
@@ -76,7 +82,7 @@ router.get('/dashboard', withAuth, async (req, res) => {
     const posts = postsData.map(post => post.get({ plain: true }));
 
     // Render the dashboard page with the user's posts
-    res.render('dashboard', { title: 'My Dashboard', posts, loggedIn: req.session.loggedIn });
+    res.render('dashboard', { title: 'My Dashboard', posts, loggedIn: req.session.logged_in });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Unable to load dashboard. Please try again later.' });
@@ -85,12 +91,12 @@ router.get('/dashboard', withAuth, async (req, res) => {
 
 // New post route (protected by withAuth)
 router.get('/new-post', withAuth, (req, res) => {
-  res.render('new-post', { title: 'Create New Post', loggedIn: req.session.loggedIn });
+  res.render('new-post', { title: 'Create New Post', loggedIn: req.session.logged_in });
 });
 
 // Logout route
 router.post('/logout', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.logged_in) {
     req.session.destroy((err) => {
       if (err) {
         return res.status(500).json({ message: 'Failed to log out' });
@@ -116,7 +122,7 @@ router.get('/post/edit/:id', withAuth, async (req, res) => {
     const post = postData.get({ plain: true });
 
     // Render the edit post page
-    res.render('edit-post', { title: `Edit Post: ${post.title}`, post, loggedIn: req.session.loggedIn });
+    res.render('edit-post', { title: `Edit Post: ${post.title}`, post, loggedIn: req.session.logged_in });
   } catch (err) {
     console.error(err);
     res.status(500).render('error', { message: 'Unable to load post for editing. Please try again later.' });
@@ -124,4 +130,5 @@ router.get('/post/edit/:id', withAuth, async (req, res) => {
 });
 
 module.exports = router;
+
 

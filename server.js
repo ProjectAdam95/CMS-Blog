@@ -14,6 +14,9 @@ const helpers = require('./utils/helpers');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Log current environment (development or production)
+console.log(`Running in ${process.env.NODE_ENV} mode.`);
+
 // Session settings
 const sess = {
   secret: process.env.SESSION_SECRET || 'myassignmentsecret',
@@ -37,6 +40,7 @@ app.use(session(sess));
 app.use((req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     res.setHeader('Cache-Control', 'no-store');  // Prevents caching
+    console.log('Caching disabled for development');
   }
   next();
 });
@@ -56,10 +60,10 @@ app.use('/api', apiRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err.stack);
   res.status(err.status || 500).json({
     message: err.message,
-    error: process.env.NODE_ENV === 'development' ? err : {},
+    error: process.env.NODE_ENV === 'development' ? err : {}, // Show detailed errors only in development
   });
 });
 
