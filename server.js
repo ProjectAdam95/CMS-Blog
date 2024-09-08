@@ -21,18 +21,17 @@ console.log(`Running in ${process.env.NODE_ENV} mode.`);
 const sess = {
   secret: process.env.SESSION_SECRET || 'myassignmentsecret',
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
-    httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
-    secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
-    sameSite: 'strict',  // CSRF protection
+    maxAge: 24 * 60 * 60 * 1000, 
+    httpOnly: false, 
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'lax',  
   },
   resave: false,
   saveUninitialized: false,
   store: new SequelizeStore({
-    db: sequelize,  // Use the same Sequelize connection
+    db: sequelize,
   }),
 };
-
 
 // Use session middleware
 app.use(session(sess));
