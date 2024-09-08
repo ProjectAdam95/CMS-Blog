@@ -30,6 +30,8 @@ This CMS Tech Blog application allows users to create an account, log in, and pu
 - Responsive layout for mobile and desktop devices.
 - Secure session management with `express-session` and hashed passwords using `bcrypt`.
 - Built using the MVC (Model-View-Controller) paradigm.
+- Handlebars.js used as the templating engine for dynamic HTML rendering.
+- PostgreSQL database integrated using Sequelize ORM for efficient data storage and retrieval.
 
 ### :file_folder: File Structure
 
@@ -105,20 +107,20 @@ Build
 
 ### :rocket: Deployment
 
-- To deploy the website please visit : ENTER WEBSITE HERE
+- To deploy the website please visit : [ENTER WEBSITE HERE](https://cms-blog-sp61.onrender.com/)
 
  ###  :fire: Contribution
 
  - Your contributions are always welcome and greatly appreciated. Here are some ways you can contribute to the project:
 
  1. **Report a bug** <br>
- If you think you have encountered a bug, and I should know about it, feel free to report it here [here](ENTER WEBSITE HERE). I will look into it and take the necessary steps.
+ If you think you have encountered a bug, and I should know about it, feel free to report it here [here](https://github.com/ProjectAdam95/CMS-Blog/issues). I will look into it and take the necessary steps.
  
  2. **Request a feature** <br>
- If you have a feature idea that you think would enhance the project, you can request it [here](ENTER WEBSITE HERE), If the feature is deemed viable, it will be considered for development. 
+ If you have a feature idea that you think would enhance the project, you can request it [here](https://github.com/ProjectAdam95/CMS-Blog/issues), If the feature is deemed viable, it will be considered for development. 
 
  3. **Create a pull request** <br>
- The best way to contribute is by creating a pull request. The community will appreciate your efforts. You can start by picking up any open issues from [here](ENTER WEBSITE HERE)and submitting a pull request.
+ The best way to contribute is by creating a pull request. The community will appreciate your efforts. You can start by picking up any open issues from [here](https://github.com/ProjectAdam95/CMS-Blog/issues)and submitting a pull request.
 
 ##  :page_facing_up: Resources
 
@@ -131,6 +133,7 @@ API's and Libraries
 - Sequelize: An ORM for interacting with the PostgreSQL database.
 - bcrypt: A library used for hashing passwords securely.
 - express-session: Middleware for handling user sessions and authentication.
+- Handlebars.js: Templating engine for dynamically generating HTML content.
 
 Development Tools:
 - Browser Developer Tools: Built-in tools in web browsers like Chrome and Firefox, used for debugging and inspecting the application's HTML, CSS, and JavaScript.
@@ -138,7 +141,7 @@ Development Tools:
 ##  :camera: Gallery
 Below is a preview photo of the website.
 
-Click here to view preview photos: ENTER WEBSITE HERE
+Click here to view preview photos: [ENTER WEBSITE HERE](https://imgur.com/a/LXah5Fr)
 
 
 ## :star2: Credit/Acknowledgment
