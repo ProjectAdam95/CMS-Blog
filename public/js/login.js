@@ -12,17 +12,30 @@ document.querySelector('.login-form').addEventListener('submit', async (event) =
         headers: { 'Content-Type': 'application/json' },
       });
 
-      // Log the entire response to make sure it is received correctly
+      // Log the entire response object
       console.log('Response received:', response);
 
+      // Check if the response is OK (status 200-299)
       if (response.ok) {
+        // Parse the JSON data
         const data = await response.json();
-        // Log the parsed data, including the redirectUrl
+
+        // Log the parsed data
         console.log('Login successful, data:', data);
         
-        // Redirect to the dashboard or the specified URL
-        document.location.replace(data.redirectUrl);
+        // Check if the redirectUrl property exists
+        if (data.redirectUrl) {
+          // Log the redirectUrl value
+          console.log('Redirect URL:', data.redirectUrl);
+          
+          // Redirect to the URL
+          document.location.replace(data.redirectUrl);
+        } else {
+          console.error('Redirect URL not found in response data.');
+          alert('Failed to log in.');
+        }
       } else {
+        // Log the error message
         console.error('Login failed:', await response.text());
         alert('Failed to log in.');
       }
