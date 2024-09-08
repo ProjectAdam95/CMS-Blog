@@ -5,8 +5,6 @@ const session = require('express-session');
 const exphbs = require('express-handlebars');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sequelize = require('./config/connection');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 
 // Routes
 const homeRoutes = require('./routes/homeRoutes');
