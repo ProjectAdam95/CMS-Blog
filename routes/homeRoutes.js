@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 
     const posts = postsData.map(post => post.get({ plain: true }));
 
-    // Render the home page, passing posts and the login status
+    // Render the home page, passing posts and login status
     res.render('home', { title: 'Home Page', posts, loggedIn: req.session.logged_in });
   } catch (err) {
     console.error(err);
@@ -48,13 +48,13 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
 
-    if (!user || !(await user.checkPassword(req.body.password))) { // Change this to checkPassword
+    if (!user || !(await user.checkPassword(req.body.password))) {  // Check if username and password are valid
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
     req.session.save(() => {
       req.session.user_id = user.id;
-      req.session.logged_in = true;
+      req.session.logged_in = true;  // Save login session
       res.json({ message: 'Login successful', redirectUrl: '/dashboard' });
     });
   } catch (err) {
@@ -66,30 +66,30 @@ router.post('/login', async (req, res) => {
 // Login route (GET) - Render the login page
 router.get('/login', (req, res) => {
   if (req.session.logged_in) {
-    return res.redirect('/dashboard');  // Redirect if already logged in
+    return res.redirect('/dashboard');  // Redirect to dashboard if already logged in
   }
-  res.render('login', { title: 'Login' });  // Render the login page
+  res.render('login', { title: 'Login' });  // Render login page
 });
 
-// Signup route
+// Signup route - Render signup page
 router.get('/signup', (req, res) => {
   if (req.session.logged_in) {
-    return res.redirect('/');
+    return res.redirect('/');  // Redirect to home if logged in
   }
   res.render('signup', { title: 'Signup' });
 });
 
-// Dashboard route (protected by withAuth)
+// Dashboard route - Display user-specific posts (protected by withAuth)
 router.get('/dashboard', withAuth, async (req, res) => {
-  // Fetch user-specific posts if logged in
   try {
     const postsData = await Post.findAll({
-      where: { user_id: req.session.user_id },
+      where: { user_id: req.session.user_id },  // Fetch posts by logged-in user
       include: [{ model: User, attributes: ['username'] }]
     });
 
     const posts = postsData.map(post => post.get({ plain: true }));
 
+    // Render dashboard page
     res.render('dashboard', { 
       title: 'My Dashboard', 
       posts, 
@@ -101,12 +101,12 @@ router.get('/dashboard', withAuth, async (req, res) => {
   }
 });
 
-// New post route (protected by withAuth)
+// New post route - Render new post form (protected by withAuth)
 router.get('/new-post', withAuth, (req, res) => {
   res.render('new-post', { title: 'Create New Post', loggedIn: req.session.logged_in });
 });
 
-// Logout route
+// Logout route - End the session
 router.post('/logout', (req, res) => {
   if (req.session.logged_in) {
     req.session.destroy((err) => {
@@ -120,7 +120,7 @@ router.post('/logout', (req, res) => {
   }
 });
 
-// Edit post route (protected by withAuth)
+// Edit post route - Render the edit post page (protected by withAuth)
 router.get('/post/edit/:id', withAuth, async (req, res) => {
   try {
     const postData = await Post.findByPk(req.params.id, {
@@ -133,7 +133,7 @@ router.get('/post/edit/:id', withAuth, async (req, res) => {
 
     const post = postData.get({ plain: true });
 
-    // Render the edit post page
+    // Render edit post page
     res.render('edit-post', { title: `Edit Post: ${post.title}`, post, loggedIn: req.session.logged_in });
   } catch (err) {
     console.error(err);
@@ -142,5 +142,6 @@ router.get('/post/edit/:id', withAuth, async (req, res) => {
 });
 
 module.exports = router;
+
 
 
