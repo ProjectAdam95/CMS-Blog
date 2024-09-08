@@ -1,8 +1,10 @@
+// Filename: models/User.js
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 const bcrypt = require('bcrypt');
 
 class User extends Model {
+  // Method to compare login password with hashed password
   async checkPassword(loginPw) {
     return await bcrypt.compare(loginPw, this.password);
   }
@@ -43,9 +45,10 @@ User.init(
     timestamps: false,
     underscored: true,
     modelName: 'user',
-    tableName: 'users', // Change table name to 'users' instead of 'user'
+    tableName: 'users',  // Ensure the table name is correct
   }
 );
 
 module.exports = User;
+
 

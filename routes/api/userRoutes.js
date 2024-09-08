@@ -7,14 +7,15 @@ router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ where: { username: req.body.username } });
 
-    if (!user || !(await user.validatePassword(req.body.password))) {
+    // Use checkPassword method from the User model
+    if (!user || !(await user.checkPassword(req.body.password))) {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
+    // Save user session
     req.session.user_id = user.id;
     req.session.logged_in = true;
 
-    // Force session save
     req.session.save((err) => {
       if (err) {
         console.error('Session save error:', err);
@@ -42,16 +43,15 @@ router.post('/signup', async (req, res) => {
       password: req.body.password,
     });
 
-    req.session.save(() => {
-      req.session.user_id = newUser.id;
-      req.session.logged_in = true;
+    req.session.user_id = newUser.id;
+    req.session.logged_in = true;
 
-      // Return a JSON response with the redirect URL
+    req.session.save(() => {
       res.status(200).json({ message: 'Signed up successfully!', redirectUrl: '/dashboard' });
     });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'An error occurred during signup', error: err });
+    console.error('Signup Error:', err);
+    res.status(500).json({ message: 'An error occurred during signup.', error: err });
   }
 });
 
@@ -59,7 +59,6 @@ router.post('/signup', async (req, res) => {
 router.post('/logout', (req, res) => {
   if (req.session.logged_in) {
     req.session.destroy(() => {
-      // Return a JSON response to confirm logout and redirect
       res.status(204).json({ message: 'Logged out successfully', redirectUrl: '/' });
     });
   } else {
@@ -68,7 +67,6 @@ router.post('/logout', (req, res) => {
 });
 
 module.exports = router;
-
 
 
 
